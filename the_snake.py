@@ -129,7 +129,8 @@ class Snake(GameObject):
 
     def draw(self):
         """Отрисовывает змейку на экране, затирая след."""
-        self.draw_cell(self.get_head_position())
+        for position in self.positions:
+            self.draw_cell(position)
         if self.last:
             self.draw_cell(self.last, BOARD_BACKGROUND_COLOR, False)
 
