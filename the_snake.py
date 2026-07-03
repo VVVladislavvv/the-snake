@@ -69,11 +69,12 @@ class Apple(GameObject):
 
     def randomize_position(self):
         """Устанавливает случайное положение яблока на игровом поле."""
+        occupied_cell = set(self.positions)
         free_cells = [
             (x * GRID_SIZE, y * GRID_SIZE)
             for x in range(GRID_WIDTH)
             for y in range(GRID_HEIGHT)
-            if (x * GRID_SIZE, y * GRID_SIZE) not in self.positions
+            if (x * GRID_SIZE, y * GRID_SIZE) not in occupied_cell
         ]
 
         if not free_cells:
@@ -107,7 +108,7 @@ class Snake(GameObject):
         new_head_x = (head_x + (d_x * GRID_SIZE)) % SCREEN_WIDTH
         new_head_y = (head_y + (d_y * GRID_SIZE)) % SCREEN_HEIGHT
         self.positions.insert(0, (new_head_x, new_head_y))
-        if len(self.positions) != self.lenght:
+        if len(self.positions) > self.length:
             self.last = self.positions.pop()
         else:
             self.last = None
@@ -121,7 +122,7 @@ class Snake(GameObject):
 
     def reset(self):
         """Сбрасывает змейку в начальное состояние."""
-        self.lenght = 1
+        self.length = 1
         self.direction = RIGHT
         self.last = None
         self.positions = [SCREEN_CENTR]
@@ -178,9 +179,10 @@ def main():
         handle_keys(snake)
         snake.move()
         head_position = snake.get_head_position()
+        apple.positions = snake.positions
 
         if head_position == apple.position:
-            snake.lenght += 1
+            snake.length += 1
             apple.randomize_position()
 
         if head_position in snake.positions[1:]:
