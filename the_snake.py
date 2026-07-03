@@ -1,4 +1,4 @@
-from random import randint
+from random import choice
 
 import pygame as pg
 
@@ -21,7 +21,7 @@ APPLE_COLOR = (255, 0, 0)
 
 SNAKE_COLOR = (0, 255, 0)
 
-SPEED = 10
+SPEED = 20
 
 # Настройка игрового окна:
 screen = pg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -69,12 +69,17 @@ class Apple(GameObject):
 
     def randomize_position(self):
         """Устанавливает случайное положение яблока на игровом поле."""
-        while True:
-            x_position = randint(0, GRID_WIDTH - 2) * GRID_SIZE
-            y_position = randint(0, GRID_HEIGHT - 2) * GRID_SIZE
-            self.position = (x_position, y_position)
-            if self.position not in self.positions:
-                break
+        free_cells = [
+            (x * GRID_SIZE, y * GRID_SIZE)
+            for x in range(GRID_WIDTH)
+            for y in range(GRID_HEIGHT)
+            if (x * GRID_SIZE, y * GRID_SIZE) not in self.positions
+        ]
+
+        if not free_cells:
+            pg.quit()
+            raise SystemExit
+        self.position = choice(free_cells)
 
     def draw(self):
         """Отрисовывает яблоко на игровой поверхности."""
