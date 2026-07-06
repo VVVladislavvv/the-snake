@@ -85,7 +85,9 @@ class Apple(GameObject):
     генерирует новые координаты яблока при его съедании.
     """
 
-    def __init__(self, positions=[[]], body_color=APPLE_COLOR):
+    def __init__(self, positions=None, body_color=APPLE_COLOR):
+        if positions is None:
+            positions = []
         super().__init__(body_color)
         self.randomize_position(positions)
 
