@@ -72,11 +72,10 @@ class GameObject:
     def draw_cell(self, position, color=None):
         """Отрисовка ячейки"""
         rect = pg.Rect(position, (GRID_SIZE, GRID_SIZE))
-        if color is None:
-            pg.draw.rect(screen, self.body_color, rect)
+        color = color or self.body_color
+        pg.draw.rect(screen, color, rect)
+        if color == self.body_color:
             pg.draw.rect(screen, BORDER_COLOR, rect, 1)
-        else:
-            pg.draw.rect(screen, BOARD_BACKGROUND_COLOR, rect)
 
 
 class Apple(GameObject):
@@ -86,8 +85,7 @@ class Apple(GameObject):
     """
 
     def __init__(self, positions=None, body_color=APPLE_COLOR):
-        if positions is None:
-            positions = []
+        positions = positions or []
         super().__init__(body_color)
         self.randomize_position(positions)
 
@@ -145,8 +143,7 @@ class Snake(GameObject):
         self.length = 1
         self.last = None
         self.positions = [SCREEN_CENTR]
-        self.direction = (choice((UP, DOWN, LEFT, RIGHT))
-                          if direction is None else direction)
+        self.direction = direction or choice((UP, DOWN, LEFT, RIGHT))
 
     def draw(self):
         """Отрисовывает змейку на экране, затирая след."""
@@ -166,7 +163,7 @@ def handle_keys(snake):
             pg.quit()
             raise SystemExit
         if event.type == pg.KEYDOWN:
-            if KEY_TO_DIRECTION.get(event.key) is None:
+            if event.key not in KEY_TO_DIRECTION:
                 return
             snake.update_direction(KEY_TO_DIRECTION[event.key])
 
@@ -192,7 +189,7 @@ def main():
             snake.length += 1
             apple.randomize_position(snake.positions)
 
-        elif head_position in snake.positions[1:]:
+        elif head_position in snake.positions[3:]:
             snake.reset()
             apple.randomize_position(snake.positions)
             screen.fill(BOARD_BACKGROUND_COLOR)
